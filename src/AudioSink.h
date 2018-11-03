@@ -8,8 +8,6 @@
 #include <vector>
 #include <iostream>
 
-#include "SineWave.h"
-
 const static std::string effectDescriptions[] = { "No effect", "High gain", "Low frequency; High gain", "Pitch shifted (up)", "Pitch shifted (down)", "Normalized", "Distorted amplitude", "Distorted pitch" };
 const static std::size_t effectCount = 8;
 
