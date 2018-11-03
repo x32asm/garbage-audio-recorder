@@ -7,11 +7,6 @@
 #include "Parser.h"
 
 
-int biggest(int a, int b) {
-	return (a > b) ? a : b;
-}
-
-
 std::string getUsername() {
 	std::string usr; usr.resize(UNLEN + 1);
 	DWORD len;
@@ -20,13 +15,24 @@ std::string getUsername() {
 
 	return usr;
 }
+bool dirExists(const std::string& dirName_in) {
+	DWORD ftyp = GetFileAttributesA(dirName_in.c_str());
+	if (ftyp == INVALID_FILE_ATTRIBUTES)
+		std::printf("The provided directory does not exist.\n");
+		return false;  //invalid path
+
+	if (ftyp & FILE_ATTRIBUTE_DIRECTORY)
+		return true;   //correct path
+
+	return false;    //path leads to a file
+}
 std::string promptDirectory() {
 	SetConsoleTextAttribute(ctc::hConsole, ctc::defaultColor);
 	std::printf("enter the save directory (leave empty for desktop): ");
 	std::string directory;
 	getline(std::cin, directory);
 
-	if (directory == "") {
+	if (directory == "" || !dirExists(directory)) {
 		directory = "C:/Users/" + getUsername() + "/Desktop/";
 	}
 	else if (directory[directory.size() - 1] != '/' && directory.find('/') != -1) {
