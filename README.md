@@ -1,5 +1,5 @@
-# cpp-audio-recorder
-Audio recorder that saves the audio from your microphone to a wave file in a user specified directory. While recording, different effects can be applied to the audio. A recording can be started and stopped from anywhere on your computer; the command prompt window does not need to be in focus.
+# garbage-audio-recorder
+Audio recorder made in c++ that saves the audio from your microphone to a wave file in a user specified directory. While recording, different effects can be applied to the audio. A recording can be started and stopped from anywhere on your computer; the command prompt window does not need to be in focus.
 
 Instructions:
 
