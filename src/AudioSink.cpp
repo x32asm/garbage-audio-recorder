@@ -2,6 +2,7 @@
 #include <cstdio>
 #include <fstream>
 #include <chrono>
+#include <algorithm>
 
 #include "AudioSink.h"
 #include "sndfile.hh"
@@ -51,8 +52,10 @@ void AudioSink::setFormat(WAVEFORMATEX* pwfx) {
 }
 
 HRESULT AudioSink::copyData(BYTE* pData, UINT32 numFrames) {
+	srand((unsigned)time(NULL));
 	unsigned int dt_size = (effectIndex == 1) ? sizeof(int) : (effectIndex == 2) ? sizeof(short) : sizeof(float);
-	float volumeScale = (effectIndex == 0) ? 3 : (effectIndex == 1 || effectIndex == 2) ? 1.f / 20 : 8;
+	float volumeScale = 3;
+	float volumeNormalization = 0.01f;
 	float dfloat;
 	BYTE* b = new BYTE[dt_size];
 
@@ -65,6 +68,8 @@ HRESULT AudioSink::copyData(BYTE* pData, UINT32 numFrames) {
 				if (eapply) {
 					switch (effectIndex) {
 					case 1:
+						volumeScale = 1.f / 20;
+						volumeNormalization = -0.25;
 						dfloat += (int)(dfloat + 1)*1.5f;
 						break;
 					case 3:
@@ -74,20 +79,24 @@ HRESULT AudioSink::copyData(BYTE* pData, UINT32 numFrames) {
 						//pitch down
 						break;
 					case 5:
+						volumeScale = 8;
 						dfloat = abs(dfloat);
 						//disturbed
 						break;
 					case 6:
-						dfloat = max(dfloat, 0) * 300.5f;
+						volumeScale = 5;
+						volumeNormalization = 0.35f;
+						if (dfloat > 0.0001) dfloat = -0.001f;
+						else if (dfloat < -0.0001) dfloat = 0.001f;
+						else dfloat -= 0.0025f;
 						//walkie-talkie
 						break;
 					case 7:
-//						dfloat += ;
 						//anonymous
 						break;
 					}
 				}
-				dfloat *= (eapply) ? volumeScale : 3;
+				dfloat = dfloat * volumeScale + volumeNormalization;
 				memcpy(b, &dfloat, min(dt_size, sizeof(float)));
 				for (UINT8 d = 0; d < dt_size; ++d) audioData.push_back(b[d]);
 			}
