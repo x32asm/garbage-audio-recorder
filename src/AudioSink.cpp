@@ -53,6 +53,7 @@ void AudioSink::setFormat(WAVEFORMATEX* pwfx) {
 
 HRESULT AudioSink::copyData(BYTE* pData, UINT32 numFrames) {
 	srand((unsigned)time(NULL));
+	unsigned char effectIndex = this->effectIndex;
 	unsigned int dt_size = (effectIndex == 1) ? sizeof(int) : (effectIndex == 2) ? sizeof(short) : sizeof(float);
 	float volumeScale = 3;
 	float volumeNormalization = 0.01f;
@@ -88,7 +89,7 @@ HRESULT AudioSink::copyData(BYTE* pData, UINT32 numFrames) {
 						volumeNormalization = 0.35f;
 						if (dfloat > 0.0001) dfloat = -0.001f;
 						else if (dfloat < -0.0001) dfloat = 0.001f;
-						else dfloat -= 0.0025f;
+						else dfloat -= 0.0075f;
 						//walkie-talkie
 						break;
 					case 7:
