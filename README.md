@@ -1,6 +1,11 @@
 # garbage-audio-recorder
 Audio recorder made in c++ that saves the audio from your microphone to a wave file in a user specified directory. While recording, different effects can be applied to the audio. A recording can be started and stopped from anywhere on your computer; the command prompt window does not need to be in focus.
 
+Installing the binary:
+1. Download garbage-audio-recorder.exe and libsndfile.dll from the /bin directory
+2. Move both files into the same directory on your computer
+3. Run garbage-audio-recorder.exe
+
 Instructions:
 
 	- Press HOME to view the instruction page
