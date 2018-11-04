@@ -13,7 +13,7 @@
 
 int vkedit = VK_MENU, vkhome = VK_HOME, vksave = VK_HOME, vkstart = VK_F9, vkstop = VK_F10, vknext = VK_RIGHT, vkprev = VK_LEFT, vkapply = VK_END;
 
-std::size_t EFFECT_DESC_SIZE = 0, lastPrintLen = 0;
+std::size_t EFFECT_DESC_SIZE = 0, lastPrintLen = 0, printLen = 0;
 bool effectLastPrint = false;
 
 bool alt = false;
@@ -111,23 +111,22 @@ LRESULT CALLBACK KeyboardHookProc(int nCode, WPARAM wParam, LPARAM lParam) {
 			}
 			else std::cout << '\n';
 
-			int printlen;
 			std::string desc;
 			for (int i = -1; i < 2; ++i) {
 				if (i == 0) SetConsoleTextAttribute(ctc::hConsole, ctc::indicatorColor);
 				else SetConsoleTextAttribute(ctc::hConsole, ctc::defaultColor);
 				desc = effectDescriptions[(sink.getEffectIndex() + i >= 0) ? (sink.getEffectIndex() + i) % effectCount : effectCount + i];
-				printlen += desc.size();
+				printLen += desc.size();
 				std::printf("%s", desc.c_str());
 				SetConsoleTextAttribute(ctc::hConsole, ctc::defaultColor);
 				std::printf("%s", ((i < 1) ? " | " : ""));
 			}
-			if ((printlen += 6) < lastPrintLen) {
-				for (std::size_t i = 0; i < lastPrintLen - printlen; ++i) {
+			if ((printLen += 6) < lastPrintLen) {
+				for (std::size_t i = 0; i < lastPrintLen - printLen; ++i) {
 					std::cout << ' ';
 				}
 			}
-			lastPrintLen = printlen;
+			lastPrintLen = printLen;
 
 			effectLastPrint = true;
 		}
