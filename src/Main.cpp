@@ -111,6 +111,7 @@ LRESULT CALLBACK KeyboardHookProc(int nCode, WPARAM wParam, LPARAM lParam) {
 			}
 			else std::cout << '\n';
 
+			printLen = 0;
 			std::string desc;
 			for (int i = -1; i < 2; ++i) {
 				if (i == 0) SetConsoleTextAttribute(ctc::hConsole, ctc::indicatorColor);
