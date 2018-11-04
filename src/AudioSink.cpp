@@ -55,7 +55,7 @@ HRESULT AudioSink::copyData(BYTE* pData, UINT32 numFrames) {
 	srand((unsigned)time(NULL));
 	unsigned char effectIndex = this->effectIndex;
 	unsigned int dt_size = (effectIndex == 1) ? sizeof(int) : (effectIndex == 2) ? sizeof(short) : sizeof(float);
-	float gain = 5;
+	float gain = 1;
 	float fsample;
 	double dsample;
 	BYTE* b = new BYTE[dt_size];
@@ -70,7 +70,7 @@ HRESULT AudioSink::copyData(BYTE* pData, UINT32 numFrames) {
 					switch (effectIndex) {
 					case 1:
 						gain = 1;
-						fsample += (int)(fsample + 1)*1.5f;
+						fsample += ((fsample < 0) ? -1 : 1)*(int)(fsample + 1)*1.5f;
 						//high gain
 						break;
 					case 3:
@@ -99,8 +99,8 @@ HRESULT AudioSink::copyData(BYTE* pData, UINT32 numFrames) {
 					}
 				}
 				dsample = (double)fsample * gain;
-				if (dsample>32767.0) { dsample = 32767.0; }
-				if (dsample<-32768.0) { dsample = -32768.0; }
+//				if (dsample>32767.0) { dsample = 32767.0; }
+//				if (dsample<-32768.0) { dsample = -32768.0; }
 				fsample = (float)dsample;
 				memcpy(b, &fsample, min(dt_size, sizeof(float)));
 				for (UINT8 d = 0; d < dt_size; ++d) audioData.push_back(b[d]);
