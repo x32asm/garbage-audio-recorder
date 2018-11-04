@@ -11,7 +11,7 @@
 #include "StreamCapture.h"
 
 
-int vkedit = VK_MENU, vkhome = VK_HOME, vkstart = VK_F9, vkstop = VK_F10, vknext = VK_RIGHT, vkprev = VK_LEFT, vkapply = VK_END;
+int vkedit = VK_MENU, vkhome = VK_HOME, vksave = VK_HOME, vkstart = VK_F9, vkstop = VK_F10, vknext = VK_RIGHT, vkprev = VK_LEFT, vkapply = VK_END;
 
 bool alt = false;
 bool editstart = false, editstop = false;
@@ -32,7 +32,7 @@ LRESULT CALLBACK KeyboardHookProc(int nCode, WPARAM wParam, LPARAM lParam) {
 	if (wParam == WM_KEYDOWN) {
 		if (vkcode == vkhome && !editstart && !editstop) {
 			std::printf("%s", std::string(45, '\n').c_str());
-			instructions(vkhome, vkstart, vkstop, vknext, vkprev, vkapply);
+			instructions(vkhome, vkstart, vkstop, vknext, vkprev, vkapply, vksave);
 		}
 		else if (vkcode != vkhome) {
 			if (editstart && vkcode != vkstop) {
@@ -106,6 +106,9 @@ LRESULT CALLBACK KeyboardHookProc(int nCode, WPARAM wParam, LPARAM lParam) {
 			std::printf("%s\n", sink.getEffect().c_str());
 			SetConsoleTextAttribute(ctc::hConsole, ctc::defaultColor);
 		}
+		else if (vkcode == vksave) {
+//			setDirectory(true);
+		}
 	}
 	else if (wParam == WM_KEYUP) {
 		if (vkcode == vkapply && recording) {
@@ -129,8 +132,8 @@ void MessageLoop() {
 }
 
 int main(int argc, char** argv) {
-	startMessage(vkhome, vkstart, vkstop, vknext, vkprev, vkapply);
-	saveDir = promptDirectory();
+	startMessage(vkhome, vkstart, vkstop, vknext, vkprev, vkapply, vksave);
+	saveDir = setDirectory(true);
 
 	HHOOK keybdhook = SetWindowsHookEx(WH_KEYBOARD_LL, KeyboardHookProc, NULL, 0);
 
