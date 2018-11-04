@@ -55,9 +55,9 @@ HRESULT AudioSink::copyData(BYTE* pData, UINT32 numFrames) {
 	srand((unsigned)time(NULL));
 	unsigned char effectIndex = this->effectIndex;
 	unsigned int dt_size = (effectIndex == 1) ? sizeof(int) : (effectIndex == 2) ? sizeof(short) : sizeof(float);
-	float volumeScale = 3;
-	float volumeNormalization = 0.01f;
-	float dfloat;
+	float gain = 5;
+	float fsample;
+	double dsample;
 	BYTE* b = new BYTE[dt_size];
 
 	int temp = 0;
@@ -65,13 +65,12 @@ HRESULT AudioSink::copyData(BYTE* pData, UINT32 numFrames) {
 		b[i % dt_size] = pData[i];
 		if ((i + 1) % dt_size == 0 && i != 0) {
 			if (effectIndex != 2) {
-				memcpy(&dfloat, b, min(dt_size, sizeof(float)));
+				memcpy(&fsample, b, min(dt_size, sizeof(float)));
 				if (eapply) {
 					switch (effectIndex) {
 					case 1:
-						volumeScale = 1.f / 20;
-						volumeNormalization = -0.25;
-						dfloat += (int)(dfloat + 1)*1.5f;
+						gain = 1;
+						fsample += (int)(fsample + 1)*1.5f;
 						break;
 					case 3:
 						//pitch up
@@ -80,16 +79,17 @@ HRESULT AudioSink::copyData(BYTE* pData, UINT32 numFrames) {
 						//pitch down
 						break;
 					case 5:
-						volumeScale = 8;
-						dfloat = abs(dfloat);
+						gain = 8;
+						fsample = abs(fsample);
 						//disturbed
 						break;
 					case 6:
-						volumeScale = 5;
-						volumeNormalization = 0.35f;
-						if (dfloat > 0.0001) dfloat = -0.001f;
-						else if (dfloat < -0.0001) dfloat = 0.001f;
-						else dfloat -= 0.0075f;
+						gain = 1;
+						if (fsample > 0.01) fsample += 0.1f;
+						else if (fsample > 0.001) fsample = fsample * 10 + 0.01f;
+						else if (fsample < -0.01) fsample = -0.1f;
+						else if (fsample < -0.001) fsample *= 100;
+						else fsample -= 0.1f;
 						//walkie-talkie
 						break;
 					case 7:
@@ -97,8 +97,11 @@ HRESULT AudioSink::copyData(BYTE* pData, UINT32 numFrames) {
 						break;
 					}
 				}
-				dfloat = dfloat * volumeScale + volumeNormalization;
-				memcpy(b, &dfloat, min(dt_size, sizeof(float)));
+				dsample = (double)fsample * gain;
+				if (dsample>32767.0) { dsample = 32767.0; }
+				if (dsample<-32768.0) { dsample = -32768.0; }
+				fsample = (float)dsample;
+				memcpy(b, &fsample, min(dt_size, sizeof(float)));
 				for (UINT8 d = 0; d < dt_size; ++d) audioData.push_back(b[d]);
 			}
 			else {
