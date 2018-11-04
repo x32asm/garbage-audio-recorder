@@ -71,29 +71,30 @@ HRESULT AudioSink::copyData(BYTE* pData, UINT32 numFrames) {
 					case 1:
 						gain = 1;
 						fsample += (int)(fsample + 1)*1.5f;
+						//high gain
 						break;
 					case 3:
-						//pitch up
+						//pitch shifted (up)
 						break;
 					case 4:
-						//pitch down
+						//pitch shifted (down)
 						break;
 					case 5:
 						gain = 8;
 						fsample = abs(fsample);
-						//disturbed
+						//reduced range
 						break;
 					case 6:
 						gain = 1;
-						if (fsample > 0.01) fsample += 0.1f;
-						else if (fsample > 0.001) fsample = fsample * 10 + 0.01f;
-						else if (fsample < -0.01) fsample = -0.1f;
-						else if (fsample < -0.001) fsample *= 100;
-						else fsample -= 0.1f;
-						//walkie-talkie
+						if (fsample > 0.001) fsample += (short)0.01f;
+						else if (fsample > 0.001) fsample = (short)-fsample * 10.f;
+						else if (fsample < -0.01) fsample = abs(fsample);
+						else if (fsample < -0.001) fsample *= 50;
+						else fsample -= 0.01f;
+						//distorted amplitude
 						break;
 					case 7:
-						//anonymous
+						//distorted pitch
 						break;
 					}
 				}
@@ -106,7 +107,7 @@ HRESULT AudioSink::copyData(BYTE* pData, UINT32 numFrames) {
 			}
 			else {
 				for (UINT8 d = 0; d < dt_size; ++d) audioData.push_back(b[d]);
-				//demonic
+				//high gain; low pitch
 			}
 		}
 	}
