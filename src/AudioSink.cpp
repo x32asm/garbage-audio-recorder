@@ -70,7 +70,7 @@ HRESULT AudioSink::copyData(BYTE* pData, UINT32 numFrames) {
 					switch (effectIndex) {
 					case 1:
 						gain = 1;
-						fsample += ((fsample < 0) ? -1 : 1)*(int)(fsample + 1)*1.5f;
+						fsample += ((fsample < 0) ? -1 : 1)*(int)(fsample + 1)*1.15f;
 						//high gain
 						break;
 					case 3:
@@ -99,8 +99,6 @@ HRESULT AudioSink::copyData(BYTE* pData, UINT32 numFrames) {
 					}
 				}
 				dsample = (double)fsample * gain;
-//				if (dsample>32767.0) { dsample = 32767.0; }
-//				if (dsample<-32768.0) { dsample = -32768.0; }
 				fsample = (float)dsample;
 				memcpy(b, &fsample, min(dt_size, sizeof(float)));
 				for (UINT8 d = 0; d < dt_size; ++d) audioData.push_back(b[d]);
