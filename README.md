@@ -20,4 +20,3 @@ Upcoming Features:
 
 	* Pitch shifting audio effect
 	* Pitch distortion audio effect
-	* Custom file names
